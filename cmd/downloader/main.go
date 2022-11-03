@@ -22,6 +22,11 @@ const (
 	indexKey    = indexPrefix + subreddit
 
 	postPrefix = "post_"
+
+	find  = true
+	total = 100000000
+
+	count = true
 )
 
 func main() {
@@ -80,8 +85,8 @@ func main() {
 	storeService.Store(subreddit, receiveChan)
 
 	go func() {
-		for i := index; i < 100000; i++ {
-			posts, err := clientPush.GetPostsSubreddit(subreddit, now.Add(time.Duration(-(i-1))*time.Hour), now.Add(time.Duration(-i)*time.Hour), 100000000)
+		for i := index; i < total; i++ {
+			posts, err := clientPush.GetPostsSubreddit(subreddit, now.Add(time.Duration(-i)*time.Hour*6), now.Add(time.Duration(-(i-1))*time.Hour*6), 100000000)
 			if err != nil {
 				log.Fatalf("reddit get subreddit posts failed %s", err)
 			}

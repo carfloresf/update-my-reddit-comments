@@ -149,8 +149,8 @@ type Client struct {
 func NewClient() *Client {
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = 10
-	retryClient.RetryWaitMin = 150 * time.Second
-	retryClient.RetryWaitMax = 300 * time.Second
+	retryClient.RetryWaitMin = 5 * time.Second
+	retryClient.RetryWaitMax = 120 * time.Second
 	retryClient.Backoff = retryablehttp.DefaultBackoff
 	retryClient.HTTPClient.Timeout = 30 * time.Second
 	retryClient.CheckRetry = retryablehttp.DefaultRetryPolicy
