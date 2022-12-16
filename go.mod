@@ -3,7 +3,7 @@ module github.com/carfloresf/reddit-bot
 go 1.19
 
 require (
-	github.com/dgraph-io/badger/v3 v3.2103.3
+	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/ilyakaznacheev/cleanenv v1.4.0
 	github.com/sirupsen/logrus v1.9.0
