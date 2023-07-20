@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.3
 	github.com/hashicorp/go-retryablehttp v0.7.1
-	github.com/ilyakaznacheev/cleanenv v1.4.0
+	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cast v1.5.0
 	github.com/vartanbeno/go-reddit/v2 v2.0.0
