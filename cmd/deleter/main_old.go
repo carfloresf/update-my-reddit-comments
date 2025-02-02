@@ -23,29 +23,47 @@ func markCommentAsDeleted(db badger.DB, commentID string) error {
 // processComment handles the processing and deletion of a single Reddit comment.
 func processComment(ctx context.Context, comment *reddit.Comment, client *reddit.Client, db badger.DB) {
 	if time.Since(comment.Created.Time) > 24*time.Hour {
-		log.Printf("%s:: %s // %s %s", comment.ID, comment.Body, comment.Created, comment.PostPermalink)
+		log.WithFields(log.Fields{
+			"commentID":     comment.ID,
+			"body":          comment.Body,
+			"created":       comment.Created,
+			"postPermalink": comment.PostPermalink,
+		}).Info("Comment eligible for deletion")
 
 		exists, err := isCommentDeleted(db, comment.ID)
 		if err != nil {
-			log.Errorf("failed to check if comment exists: %s", err)
+			log.WithFields(log.Fields{
+				"commentID": comment.ID,
+				"error":     err,
+			}).Error("Failed to check if comment exists")
 			return
 		}
 		if !exists {
 			time.Sleep(10 * time.Second)
 			response, err := client.Comment.Delete(ctx, "t1_"+comment.ID)
 			if err != nil {
-				log.Errorf("failed to delete comment %s: %s", comment.ID, err)
+				log.WithFields(log.Fields{
+					"commentID": comment.ID,
+					"error":     err,
+				}).Error("Failed to delete comment")
 				return
 			}
-			log.Printf("Deleted comment response: %+v", response)
+			log.WithFields(log.Fields{
+				"commentID": comment.ID,
+				"response":  response.Response.Status,
+				"rate":      response.Rate,
+			}).Info("Deleted comment successfully")
 
 			err = markCommentAsDeleted(db, comment.ID)
 			if err != nil {
-				log.Errorf("failed to set deletion record for comment %s: %s", comment.ID, err)
+				log.WithFields(log.Fields{
+					"commentID": comment.ID,
+					"error":     err,
+				}).Error("Failed to mark comment as deleted")
 				return
 			}
 		} else {
-			log.Printf("Comment already deleted: %s", comment.ID)
+			log.WithField("commentID", comment.ID).Info("Comment already deleted")
 		}
 	}
 }
@@ -91,7 +109,6 @@ func main() {
 	}
 
 	for _, comment := range comments {
-		log.Infof("Processing comment: %s", comment.Body)
 		processComment(ctx, comment, client, badgerDB)
 	}
 }
